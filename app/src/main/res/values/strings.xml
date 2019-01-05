@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">Kidnap</string>
+    <string name="app_name">Kidnapp</string>
     <string name="btnEdit">Edit</string>
+    <string name="btnEditSendMessage">Edit Send Message</string>
+    <string name="write_message">Write message</string>
+    <string name="btnBack">Back</string>
 </resources>
