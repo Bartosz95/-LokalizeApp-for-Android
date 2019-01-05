@@ -4,4 +4,5 @@
     <string name="btnEditSendMessage">Edit Send Message</string>
     <string name="write_message">Write message</string>
     <string name="btnBack">Back</string>
+    <string name="send_message">Send Message</string>
 </resources>
