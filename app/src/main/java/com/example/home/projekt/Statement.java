@@ -38,7 +38,6 @@ public class Statement extends AppCompatActivity {
     }
 
     private TextView.OnEditorActionListener editorActionListener = new TextView.OnEditorActionListener() {
-
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             db.editStatement(textStatement.getText().toString());
@@ -46,7 +45,6 @@ public class Statement extends AppCompatActivity {
             return false;
         }
     };
-
 
     private void toastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

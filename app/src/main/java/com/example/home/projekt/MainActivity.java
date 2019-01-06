@@ -5,8 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,7 +14,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Location location;
     private Database db;
-    String tel = "7269291612";
+
+    ArrayList<ArrayList<String>> listContacts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,13 @@ public class MainActivity extends AppCompatActivity {
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    Sms.SendMessage(String.format("%s My localization is: %s",db.getStatement(),location.getLastLocationString()), tel );
+                    listContacts = db.getPhoneNumbersList();
+                    StringBuffer message = new StringBuffer("You send message to:");
+                    for(int i=0;i<listContacts.size();i++){
+                        message.append("\n").append(listContacts.get(i).get(1));
+                        Sms.SendMessage(String.format("%s My localization is: %s",db.getStatement(),location.getLastLocationString()), listContacts.get(i).get(1) );
+                    }
+                    toastMessage(message.toString());
             }
         });
     }
