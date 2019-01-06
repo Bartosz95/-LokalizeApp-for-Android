@@ -27,11 +27,6 @@ public class Database {
         //dropTable(TABLE2_NAME);
         //createTable(TABLE1_NAME);
         //createTable(TABLE2_NAME);
-        //insertDefaultStatement();
-        //insertPhoneNumber("Dad", "616920045");
-        //editPhoneNumber(1,"Mom", "445284982");
-        //toastMessage(getStatement());
-        //toastMessage(getPhoneNumbersList().toString());
     }
 
     public String getStatement(){
@@ -169,6 +164,10 @@ public class Database {
                     openDatabase();
                     db.beginTransaction();
                     db.execSQL(query);
+                    String statementText = "Please come ASAP. I need you because I am in danger !!!";
+                    query = String.format("INSERT INTO %s(%s) values ('%s');", TABLE1_NAME, TABLE1_COLUMN1, statementText);
+                    db.execSQL(query);
+                    //insertDefaultStatement();
                     db.setTransactionSuccessful();
                     toastMessage(String.format("Table '%s' was created",TABLE1_NAME));
                 } catch (SQLiteException e) {
@@ -184,8 +183,8 @@ public class Database {
                 String query = String.format("CREATE TABLE %s ( %s integer PRIMARY KEY autoincrement, %s TEXT, %s TEXT);", TABLE2_NAME, TABLE2_COLUMN1, TABLE2_COLUMN2, TABLE2_COLUMN3);
                 try {
                     openDatabase();
-                    db.execSQL(query);
                     db.beginTransaction();
+                    db.execSQL(query);
                     db.setTransactionSuccessful();
                     toastMessage(String.format("Table '%s' was created",TABLE2_NAME));
                 } catch (SQLiteException e) {
@@ -196,7 +195,6 @@ public class Database {
                 }
                 break;
             }
-
         }
     }
 

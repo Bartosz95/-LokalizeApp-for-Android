@@ -42,7 +42,20 @@ public class Contacts extends AppCompatActivity {
             TextView contact = new TextView(this);
             contact.setText(listContacts.get(i).get(1));
             contact.setId(Integer.parseInt(listContacts.get(i).get(0)));
-            contact.setOnEditorActionListener(editorActionListener);
+            contact.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Contacts.this);
+                    builder.setTitle("What you want to do?");
+                    builder.create().show();
+                           /* .setItems(R.array.colors_array, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // The 'which' argument contains the index position
+                                    // of the selected item
+                                }
+                            });*/
+                }
+            });
             contactView.addView(contact);
         }
 
@@ -65,13 +78,35 @@ public class Contacts extends AppCompatActivity {
         );
     }
 
-    private TextView.OnEditorActionListener editorActionListener = new TextView.OnEditorActionListener() {
-        @Override
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-           toastMessage("hi");
-            return false;
+    @Override
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+        switch (reqCode) {
+            case (PICK_CONTACT) :
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri contactData = data.getData();
+                    Cursor c =  managedQuery(contactData, null, null, null, null);
+                    if (c.moveToFirst()) {
+                        String id =c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+
+                        String hasPhone =c.getString(c.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+                        if (hasPhone.equalsIgnoreCase("1")) {
+                            Cursor phones = getContentResolver().query(
+                                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+                                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ id,
+                                    null, null);
+                            phones.moveToFirst();
+                            String name, number;
+                            number = phones.getString(phones.getColumnIndex("data1"));
+                            name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                            db.insertPhoneNumber(name,number);
+                            startActivity(new Intent(Contacts.this, Contacts.class));
+                        }
+                    }
+                }
+                break;
         }
-    };
+    }
 
     private void toastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
