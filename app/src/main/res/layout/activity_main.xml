@@ -13,8 +13,19 @@
         android:text="@string/btnEditSendMessage" />
 
     <Button
+        android:id="@+id/btnEditContacts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Edit Contacts" />
+
+    <Button
         android:id="@+id/btnSendMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/send_message" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>

@@ -5,11 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnEditSendMessage, btnSendMessage;
+    private Button btnEditSendMessage, btnEditContacts, btnSendMessage;
 
     private Location location;
     private Database db;
@@ -31,6 +32,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btnEditContacts = (Button) findViewById(R.id.btnEditContacts) ;
+        btnEditContacts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, Contacts.class));
+            }
+        });
+
         btnSendMessage = (Button) findViewById(R.id.btnSendMessage);
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,6 +52,5 @@ public class MainActivity extends AppCompatActivity {
     private void toastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
 }
 
