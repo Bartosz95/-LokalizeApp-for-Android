@@ -21,6 +21,7 @@ public class Location {
     private long UPDATE_INTERVAL = 10 * 1000;
     private long FASTEST_INTERVAL = 5 * 1000; // update 5s
 
+    private android.location.Location lastLocation;
     private Activity activity;
 
     public Location(Activity activity){
@@ -45,12 +46,16 @@ public class Location {
         SettingsClient settingsClient = LocationServices.getSettingsClient(activity);
         settingsClient.checkLocationSettings(locationSettingsRequest);
 
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {return; }
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {return; }
 
         getFusedLocationProviderClient(activity).requestLocationUpdates(mLocationRequest, new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                onLocationChanged(locationResult.getLastLocation());
+                setLastLocation(locationResult.getLastLocation());
+                //onLocationChanged(locationResult.getLastLocation());
             }
         }, Looper.myLooper());
     }
@@ -60,6 +65,14 @@ public class Location {
                 Double.toString(location.getLatitude()) + "," +
                 Double.toString(location.getLongitude());
         toastMessage(msg);
+    }
+
+    private void setLastLocation(android.location.Location location){
+        lastLocation = location;
+    }
+
+    public String getLastLocationString() {
+        return Double.toString(lastLocation.getLatitude()) + ", " + Double.toString(lastLocation.getLongitude());
     }
 
     private void toastMessage(String message){

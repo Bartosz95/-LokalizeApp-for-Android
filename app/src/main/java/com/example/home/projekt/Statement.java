@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,7 +16,6 @@ public class Statement extends AppCompatActivity {
     private EditText textStatement;
 
     Database db;
-    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +23,6 @@ public class Statement extends AppCompatActivity {
         setContentView(R.layout.statement);
 
         db = new Database(this);
-        intent = new Intent(this, MainActivity.class);
 
         textStatement = (EditText) findViewById(R.id.editTextStatement);
         textStatement.setText(db.getStatement());
@@ -35,7 +32,7 @@ public class Statement extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(intent);
+                startActivity(new Intent(Statement.this, MainActivity.class));
             }
         });
     }
@@ -45,7 +42,7 @@ public class Statement extends AppCompatActivity {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             db.editStatement(textStatement.getText().toString());
-            startActivity(intent);
+            startActivity(new Intent(Statement.this, MainActivity.class));
             return false;
         }
     };

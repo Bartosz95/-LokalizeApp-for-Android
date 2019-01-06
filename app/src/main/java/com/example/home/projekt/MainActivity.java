@@ -1,8 +1,6 @@
 package com.example.home.projekt;
 
-
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -15,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Location location;
     private Database db;
-    private Intent intent;
+    String tel = "7269291612";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,13 +22,12 @@ public class MainActivity extends AppCompatActivity {
 
         location = new Location(this);
         db = new Database(this);
-        intent = new Intent(this, Statement.class);
 
         btnEditSendMessage = (Button) findViewById(R.id.btnEditSendMessage);
         btnEditSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(intent);
+                startActivity(new Intent(MainActivity.this, Statement.class)); // intencja zmiany strony
             }
         });
 
@@ -38,9 +35,7 @@ public class MainActivity extends AppCompatActivity {
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto: 1243"));
-                intent.putExtra("sms_body",db.getStatement());
-                startActivity(intent);
+                    Sms.SendMessage(String.format("%s My localization is: %s",db.getStatement(),location.getLastLocationString()), tel );
             }
         });
     }
@@ -48,5 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private void toastMessage(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
 }
 
