@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         btnEditSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, Statement.class)); // intencja zmiany strony
+                startActivity(new Intent(MainActivity.this, Statement.class));
             }
         });
 

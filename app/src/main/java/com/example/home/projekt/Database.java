@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.widget.Toast;
-
 import java.io.File;
+import java.util.ArrayList;
 
 public class Database {
 
@@ -23,22 +23,131 @@ public class Database {
 
     public Database(Activity activity) {
         this.activity = activity;
-        openDatabase();
         //dropTable(TABLE1_NAME);
         //dropTable(TABLE2_NAME);
         //createTable(TABLE1_NAME);
         //createTable(TABLE2_NAME);
         //insertDefaultStatement();
         //insertPhoneNumber("Dad", "616920045");
-        //showTable(TABLE1_NAME);
-        //showTable(TABLE2_NAME);
         //editPhoneNumber(1,"Mom", "445284982");
-        //showTable(TABLE1_NAME);
-        showTable(TABLE2_NAME);
-        //insertData();
-        //editData("Hi");
-        //getStatement();
-        finish();
+        //toastMessage(getStatement());
+        //toastMessage(getPhoneNumbersList().toString());
+    }
+
+    public String getStatement(){
+        String ret = "";
+        try {
+            openDatabase();
+            db.beginTransaction();
+            String query = String.format("SELECT %s FROM %s",TABLE1_COLUMN1 , TABLE1_NAME);
+            Cursor cursor = db.rawQuery(query, null);
+            cursor.moveToPosition(0);
+            ret = cursor.getString(0);
+        } catch (Exception e ){
+            toastMessage("Error useRawQuery: " + e.getMessage());
+        }finally {
+            db.endTransaction();
+            finish();
+            return ret;
+        }
+    }
+
+    public void editStatement(String text) {
+        try {
+            openDatabase();
+            db.beginTransaction();
+            String query = String.format("UPDATE %s SET %s='%s';", TABLE1_NAME, TABLE1_COLUMN1, text);
+            db.execSQL(query);
+            db.setTransactionSuccessful();
+            toastMessage("Statement update succesfully");
+        } catch (SQLiteException e) {
+            toastMessage("Error insertData: " + e.getMessage());
+        } finally {
+            db.endTransaction();
+            finish();
+        }
+    }
+
+    public void insertPhoneNumber(String name, String nubmer) {
+        String sql = String.format("select * from %s WHERE %s='%s'", TABLE2_NAME, TABLE2_COLUMN3, nubmer);
+        try {
+            openDatabase();
+            db.beginTransaction();
+            Cursor cursor = db.rawQuery(sql,null);
+            cursor.moveToPosition(-1);
+            if(!cursor.moveToNext()) {
+                try {
+                    String query = String.format("insert into %s(%s,%s) values ('%s','%s');", TABLE2_NAME, TABLE2_COLUMN2, TABLE2_COLUMN3, name, nubmer);
+                    db.execSQL(query);
+                    toastMessage("insert new contact");
+                } catch (SQLiteException e) {
+                    toastMessage("Error insertData: " + e.getMessage());
+                }
+            } else {
+                toastMessage(String.format("Contact with number: %s exists", nubmer));
+            }
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            toastMessage("Error insertData: " + e.getMessage());
+        }  finally {
+            db.endTransaction();
+            finish();
+        }
+    }
+
+    public ArrayList<ArrayList<String>> getPhoneNumbersList(){
+        String sql = "select * from " + TABLE2_NAME ;
+        ArrayList<ArrayList<String>> Data = new ArrayList<ArrayList<String>>();
+        try {
+            openDatabase();
+            Cursor cursor = db.rawQuery(sql, null);
+            cursor.moveToPosition(-1);
+            while (cursor.moveToNext()) {
+                ArrayList<String> Row = new ArrayList<String>();
+                for (int i = 0; i < cursor.getColumnCount(); i++) {
+                    Row.add(cursor.getString(i));
+                }
+                Data.add(Row);
+            }
+            return Data;
+        } catch (Exception e){
+            toastMessage("Error get phone numbers: " + e.getMessage());
+        } finally {
+            finish();
+            return Data;
+        }
+    }
+
+    public void editPhoneNumber(int id, String name, String number) {
+        String query = String.format("UPDATE %s SET %s = '%s', %s = '%s' WHERE %s = '%s'", TABLE2_NAME, TABLE2_COLUMN2, name, TABLE2_COLUMN3, number, TABLE2_COLUMN1, id);
+        try {
+            openDatabase();
+            db.beginTransaction();
+            db.execSQL(query);
+            db.setTransactionSuccessful();
+            toastMessage("edit phone number: " + id);
+        } catch (SQLiteException e) {
+            toastMessage("Error insertData: " + e.getMessage());
+        } finally {
+            db.endTransaction();
+            finish();
+        }
+    }
+
+    public void deletePhoneNumber(int id){
+        String query = String.format("DELETE %s WHERE %s = '%s'", TABLE2_NAME, TABLE2_COLUMN1, id);
+        try {
+            openDatabase();
+            db.beginTransaction();
+            db.execSQL(query);
+            db.setTransactionSuccessful();
+            toastMessage("delete phone number: " + id);
+        } catch (SQLiteException e) {
+            toastMessage("Error insertData: " + e.getMessage());
+        } finally {
+            db.endTransaction();
+            finish();
+        }
     }
 
     private void openDatabase() {
@@ -57,6 +166,7 @@ public class Database {
             case TABLE1_NAME: {
                 String query = String.format("CREATE TABLE %s ( %s TEXT);", TABLE1_NAME, TABLE1_COLUMN1);
                 try {
+                    openDatabase();
                     db.beginTransaction();
                     db.execSQL(query);
                     db.setTransactionSuccessful();
@@ -65,6 +175,7 @@ public class Database {
                     toastMessage("Error insertData: " + e.getMessage());
                 } finally {
                     db.endTransaction();
+                    finish();
                 }
                 break;
             }
@@ -72,6 +183,7 @@ public class Database {
             case TABLE2_NAME: {
                 String query = String.format("CREATE TABLE %s ( %s integer PRIMARY KEY autoincrement, %s TEXT, %s TEXT);", TABLE2_NAME, TABLE2_COLUMN1, TABLE2_COLUMN2, TABLE2_COLUMN3);
                 try {
+                    openDatabase();
                     db.execSQL(query);
                     db.beginTransaction();
                     db.setTransactionSuccessful();
@@ -80,6 +192,7 @@ public class Database {
                     toastMessage("Error insertData: " + e.getMessage());
                 } finally {
                     db.endTransaction();
+                    finish();
                 }
                 break;
             }
@@ -91,19 +204,25 @@ public class Database {
         switch (tableName){
             case TABLE1_NAME: {
                 try {
+                    openDatabase();
                     db.execSQL(String.format("DROP TABLE '%s'; ", TABLE1_NAME));
                     toastMessage(String.format("'%s'- dropped!!", TABLE1_NAME));
                 } catch (Exception e) {
                     toastMessage("Error dropTable:\n" + e.getMessage());
+                } finally {
+                    finish();
                 }
                 break;
             }
             case TABLE2_NAME: {
                 try {
+                    openDatabase();
                     db.execSQL(String.format("DROP TABLE '%s'; ", TABLE2_NAME));
                     toastMessage(String.format("'%s'- dropped!!",TABLE2_NAME));
                 } catch (Exception e) {
                     toastMessage("Error dropTable:\n" + e.getMessage());
+                } finally {
+                    finish();
                 }
             }
             break;
@@ -113,134 +232,19 @@ public class Database {
     private void insertDefaultStatement() {
         String statementText = "Please came ASAP. I need you because I am in danger !!!";
         String query = String.format("INSERT INTO %s(%s) values ('%s');", TABLE1_NAME, TABLE1_COLUMN1, statementText);
-        db.beginTransaction();
-        try {
-            db.execSQL(query);
-            db.setTransactionSuccessful();
-            toastMessage("insert new statement");
-        } catch (SQLiteException e) {
-            toastMessage("Error insertData: " + e.getMessage());
-        } finally {
-            db.endTransaction();
-        }
-    }
-
-    public void insertPhoneNumber(String name, String nubmer) {
-        String query = String.format("insert into %s(%s,%s) values ('%s','%s');", TABLE2_NAME, TABLE2_COLUMN2, TABLE2_COLUMN3, name, nubmer);
-        db.beginTransaction();
-        try {
-            db.execSQL(query);
-            db.setTransactionSuccessful();
-            toastMessage("insert new statement");
-        } catch (SQLiteException e) {
-            toastMessage("Error insertData: " + e.getMessage());
-        } finally {
-            db.endTransaction();
-        }
-    }
-
-    private void editPhoneNumber(int id, String name, String number) {
-        String query = String.format("UPDATE %s SET %s = '%s', %s = '%s' WHERE %s = '%s'", TABLE2_NAME, TABLE2_COLUMN2, name, TABLE2_COLUMN3, number, TABLE2_COLUMN1, id);
-        try {
-            db.beginTransaction();
-            db.execSQL(query);
-            db.setTransactionSuccessful();
-            toastMessage("insert new statement");
-        } catch (SQLiteException e) {
-            toastMessage("Error insertData: " + e.getMessage());
-        } finally {
-            db.endTransaction();
-        }
-    }
-
-    /*public String[][] getPhoneNumbersList(){
-        String[] line = new String[3];
-            }*/
-
-    private String showCursor(Cursor cursor) {
-        cursor.moveToPosition(-1);
-        StringBuilder cursorData = new StringBuilder();
-        /*cursorData.append("Cursor: [");
-        try {
-            String[] colName = cursor.getColumnNames();
-            for(int i=0; i<colName.length; i++){
-                String dataType = getColumnType(cursor, i);
-                cursorData.append(colName[i]).append(dataType);
-                if(i<colName.length-1){
-                    cursorData.append(", ");
-                }
-            }
-        } catch (Exception e){
-            toastMessage("<<SCHEMA>>" + e.getMessage());
-        }
-        cursorData.append("]");*/
-        cursor.moveToPosition(-1);
-        while (cursor.moveToNext()) {
-            StringBuilder cursorRow = new StringBuilder();
-            for (int i = 0; i < cursor.getColumnCount(); i++) {
-                cursorRow.append(cursor.getString(i));
-                if (i<cursor.getColumnCount()-1)
-                    cursorRow.append("\n");
-            }
-            cursorData.append(cursorRow);
-        }
-        return cursorData.toString();
-    }
-
-    private String getColumnType(Cursor cursor, int i) {
-        try {
-            cursor.moveToFirst();
-            int result = cursor.getType(i);
-            String[] types = {"(NULL)", "(INT)", "(FLOAT)", "(STR)", "(BLOB)", "(UNK)" };
-            cursor.moveToPosition(-1);
-            return types[result];
-        } catch (Exception e) {
-            return " ";
-        }
-    }
-
-    private void showTable(String tableName) {
-        try {
-            String sql = "select * from " + tableName ;
-            Cursor c = db.rawQuery(sql, null);
-            toastMessage(String.format("Table %s:\n", tableName) + showCursor(c) );
-        } catch (Exception e) {
-            toastMessage("Error showTable: " + e.getMessage());
-        }
-    }
-
-   public String getStatement(){
-        String ret = "";
         try {
             openDatabase();
             db.beginTransaction();
-            String query = String.format("SELECT * FROM %s", TABLE1_NAME);
-            Cursor cursor = db.rawQuery(query, null);
-            ret = showCursor(cursor);
-        } catch (Exception e ){
-            toastMessage("Error useRawQuery: " + e.getMessage());
-        }finally {
-            db.endTransaction();
-            finish();
-            return ret;
-        }
-    }
-
-   public void editStatement(String text) {
-        try {
-            openDatabase();
-            db.beginTransaction();
-            String query = String.format("UPDATE %s SET %s='%s';", TABLE1_NAME, TABLE1_COLUMN1, text);
             db.execSQL(query);
             db.setTransactionSuccessful();
-            toastMessage("Statement update succesfully");
+            toastMessage("insert new statement");
         } catch (SQLiteException e) {
             toastMessage("Error insertData: " + e.getMessage());
         } finally {
             db.endTransaction();
             finish();
         }
-   }
+    }
 
     private void finish() {
         db.close();
