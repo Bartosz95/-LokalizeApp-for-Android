@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
                     listContacts = db.getPhoneNumbersList();
                     StringBuffer message = new StringBuffer("You send message to:");
                     for(int i=0;i<listContacts.size();i++){
-                        message.append("\n").append(listContacts.get(i).get(1)); // nie wysyla wiadomosci
-                        Sms.SendMessage(String.format("%s My localization is: %s",db.getStatement(),location.getLastLocationString()), listContacts.get(i).get(1) );
+                        message.append("\n").append(listContacts.get(i).get(1));
+                        Sms.SendMessage(String.format("%s My localization is: %s",db.getStatement(),location.getLastLocationString()), listContacts.get(i).get(2) );
                     }
                     toastMessage(message.toString());
             }

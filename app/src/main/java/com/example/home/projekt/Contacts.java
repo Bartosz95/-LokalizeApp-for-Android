@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
+import android.text.style.TextAppearanceSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.awt.font.TextAttribute;
 import java.util.ArrayList;
 
 
@@ -42,6 +44,7 @@ public class Contacts extends AppCompatActivity {
             TextView contact = new TextView(this);
             contact.setText(listContacts.get(i).get(1));
             contact.setId(Integer.parseInt(listContacts.get(i).get(0)));
+            contact.setTextAppearance(this,android.R.style.TextAppearance_Material_Display1);
             contact.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
