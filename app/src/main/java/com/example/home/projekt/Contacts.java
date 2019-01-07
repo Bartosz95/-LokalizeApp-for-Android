@@ -41,22 +41,30 @@ public class Contacts extends AppCompatActivity {
         contactView = (LinearLayout) findViewById(R.id.layoutVertical);
         listContacts = db.getPhoneNumbersList();
         for(int i=0; i<listContacts.size();i++){
-            TextView contact = new TextView(this);
+            final TextView contact = new TextView(this);
             contact.setText(listContacts.get(i).get(1));
             contact.setId(Integer.parseInt(listContacts.get(i).get(0)));
             contact.setTextAppearance(this,android.R.style.TextAppearance_Material_Display1);
-            contact.setOnClickListener(new View.OnClickListener() {
+            contact.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Contacts.this);
-                    builder.setTitle("What you want to do?");
-                    builder.create().show();
-                           /* .setItems(R.array.colors_array, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // The 'which' argument contains the index position
-                                    // of the selected item
-                                }
-                            });*/
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(Contacts.this);
+                    alert.setTitle(String.format("Want you DELETE contact %s ?", contact.getText()));
+                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            toastMessage("You delete " + contact.getId());
+                            db.deletePhoneNumber(contact.getId());
+                            startActivity(new Intent(Contacts.this, Contacts.class));
+                        }
+                    });
+                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    alert.create().show();
+                    return false;
                 }
             });
             contactView.addView(contact);

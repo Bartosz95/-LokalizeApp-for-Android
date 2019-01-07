@@ -130,17 +130,14 @@ public class Database {
     }
 
     public void deletePhoneNumber(int id){
-        String query = String.format("DELETE %s WHERE %s = '%s'", TABLE2_NAME, TABLE2_COLUMN1, id);
+        String query = String.format("DELETE FROM %s WHERE %s = '%s';", TABLE2_NAME, TABLE2_COLUMN1, id);
+        toastMessage(query);
         try {
             openDatabase();
-            db.beginTransaction();
             db.execSQL(query);
-            db.setTransactionSuccessful();
-            toastMessage("delete phone number: " + id);
         } catch (SQLiteException e) {
-            toastMessage("Error insertData: " + e.getMessage());
+            toastMessage("Error deleteData: " + e.getMessage());
         } finally {
-            db.endTransaction();
             finish();
         }
     }
