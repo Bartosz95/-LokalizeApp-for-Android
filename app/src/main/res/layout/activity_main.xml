@@ -16,7 +16,7 @@
         android:id="@+id/btnEditContacts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Edit Contacts" />
+        android:text="@string/edit_contacts" />
 
     <Button
         android:id="@+id/btnSendMessage"
@@ -25,12 +25,13 @@
         android:text="@string/send_message" />
 
     <Button
+        android:id="@+id/btnListening"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
         android:id="@+id/btnAlarm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 </LinearLayout>

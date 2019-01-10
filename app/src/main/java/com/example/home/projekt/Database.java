@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class Database {
 
+    Toast toast;
     private Activity activity;
     private SQLiteDatabase db;
     private static final String TABLE1_NAME = "statement";
@@ -23,6 +24,8 @@ public class Database {
 
     public Database(Activity activity) {
         this.activity = activity;
+
+        toast = Toast.makeText(activity, "", Toast.LENGTH_SHORT);
         //dropTable(TABLE1_NAME);
         //dropTable(TABLE2_NAME);
         //createTable(TABLE1_NAME);
@@ -247,7 +250,8 @@ public class Database {
     }
 
     private void toastMessage(String message) {
-        Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+        toast.setText(message);
+        toast.show();
     }
 }
 
