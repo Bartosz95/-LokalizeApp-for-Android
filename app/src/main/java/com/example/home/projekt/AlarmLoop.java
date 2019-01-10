@@ -33,11 +33,10 @@ public class AlarmLoop extends Service {
 
     private class MyTimerTask extends TimerTask {
         @Override
-        public void run() {
+        public void run() { // activate MainActivity.sendMessage()
             if (serviceCallbacks != null) {
                 serviceCallbacks.sendMessage();
             }
-            //showToast("AlarmLoop");
         }
     }
 
@@ -48,12 +47,11 @@ public class AlarmLoop extends Service {
         toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
     }
 
-
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) { ;
+    public int onStartCommand(Intent intent, int flags, int startId) {
         clearTimerSchedule();
         initTask();
-        timer.scheduleAtFixedRate(timerTask, 4 * 1000, 4*1000);
+        timer.scheduleAtFixedRate(timerTask, 0, 3*60*1000);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -71,13 +69,6 @@ public class AlarmLoop extends Service {
     @Override
     public void onDestroy() {
         clearTimerSchedule();
-        showToast("Alarm stopped");
         super.onDestroy();
     }
-
-    private void showToast(String text) {
-        toast.setText(text);
-        toast.show();
-    }
-
 }

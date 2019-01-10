@@ -57,13 +57,7 @@ public class MainActivity extends AppCompatActivity implements ServiceCallbacks 
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    listContacts = db.getPhoneNumbersList();
-                    StringBuffer message = new StringBuffer("You send message to:");
-                    for(int i=0;i<listContacts.size();i++){
-                        message.append("\n").append(listContacts.get(i).get(1));
-                        Sms.SendMessage(String.format("%s My localization is: %s",db.getStatement(),location.getLastLocationString()), listContacts.get(i).get(2) );
-                    }
-                    toastMessage(message.toString());
+                    sendMessage();
             }
         });
 
@@ -72,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements ServiceCallbacks 
         btnListening.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listening = setListening(listening);
+                startStopListening();
             }
         });
 
@@ -81,7 +75,8 @@ public class MainActivity extends AppCompatActivity implements ServiceCallbacks 
         btnAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alarm = setAlarm(alarm);
+                if(listening) startStopListening();
+                startStopAlarm();
             }
         });
     }
@@ -91,14 +86,16 @@ public class MainActivity extends AppCompatActivity implements ServiceCallbacks 
         toast.show();
     }
 
-    private boolean setAlarm(boolean alarm){
-        if(alarm){ // wylaczenie alarmu
+    // fcn activated/deactivated alarm
+    private void startStopAlarm(){
+        if(alarm){
             stopService(intentAlarm);
             btnAlarm.setText("Start Alarm");
             toastMessage("Alarm stopped");
             stop();
             alarm = false;
         } else { // wystartowanie alarmu
+            sendMessage();
             intentAlarm = new Intent(MainActivity.this, AlarmLoop.class);
             bindService(intentAlarm, alarmServiceConnection, Context.BIND_AUTO_CREATE);
             startService(intentAlarm);
@@ -106,10 +103,29 @@ public class MainActivity extends AppCompatActivity implements ServiceCallbacks 
             toastMessage("Alarm started");
             alarm = true;
         }
-        return alarm;
+        deactivatedButtons();
     }
 
-    private boolean setListening(boolean listening){
+    private void deactivatedButtons(){
+        if(alarm || listening){
+            btnEditContacts.setEnabled(false);
+            btnSendMessage.setEnabled(false);
+            btnEditSendMessage.setEnabled(false);
+        } else {
+            btnEditContacts.setEnabled(true);
+            btnSendMessage.setEnabled(true);
+            btnEditSendMessage.setEnabled(true);
+        }
+        if(alarm){
+            btnListening.setEnabled(false);
+        } else {
+            btnListening.setEnabled(true);
+        }
+
+    }
+
+    // fcn activated/deactivated listening
+    private void startStopListening(){
         if(listening){ // wylaczenie nasluchiwania
             stopService(intentListening);
             btnListening.setText("Start listening");
@@ -124,12 +140,12 @@ public class MainActivity extends AppCompatActivity implements ServiceCallbacks 
             toastMessage("Listening started");
             listening = true;
         }
-        return listening;
+        deactivatedButtons();
     }
 
     public void startAlarm(){
-        listening = setListening(listening);
-        alarm = setAlarm(alarm);
+        startStopListening();
+        startStopAlarm();
     }
 
     @Override

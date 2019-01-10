@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Kidnapp</string>
+    <string name="app_name">KidnApp</string>
     <string name="btnEdit">Edit</string>
     <string name="btnEditSendMessage">Edit Send Message</string>
     <string name="write_message">Write message</string>

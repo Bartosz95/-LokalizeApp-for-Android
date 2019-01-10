@@ -32,12 +32,6 @@ public class ListeningLoop extends Service {
         serviceCallbacks = callbacks;
     }
 
-    /*@Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }*/
-
-
     @Override
     public void onCreate() {
         super.onCreate();
