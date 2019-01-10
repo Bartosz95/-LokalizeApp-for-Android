@@ -4,19 +4,40 @@ import java.util.Timer;
 import java.util.TimerTask;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 import android.widget.Toast;
 
 public class AlarmLoop extends Service {
+    private static ServiceCallbacks serviceCallbacks;
+    private final IBinder binder = new LocalBinder();
     private Toast toast;
     private Timer timer;
     private TimerTask timerTask;
 
+
+    public class LocalBinder extends Binder {
+        AlarmLoop getService() {
+            return AlarmLoop.this;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
+    }
+
+    public static void setCallbacks(ServiceCallbacks callbacks) {
+        serviceCallbacks = callbacks;
+    }
+
     private class MyTimerTask extends TimerTask {
         @Override
         public void run() {
-            //Sms.SendMessage("mess","1234");
-            showToast("AlarmLoop");
+            if (serviceCallbacks != null) {
+                serviceCallbacks.sendMessage();
+            }
+            //showToast("AlarmLoop");
         }
     }
 
@@ -52,11 +73,6 @@ public class AlarmLoop extends Service {
         clearTimerSchedule();
         showToast("Alarm stopped");
         super.onDestroy();
-    }
-
-    @Override
-    public IBinder onBind(Intent arg0) {
-        return null;
     }
 
     private void showToast(String text) {
