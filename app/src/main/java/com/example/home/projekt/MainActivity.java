@@ -15,7 +15,6 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements ServiceCallbacks {
 
     private Toast toast;
-    public boolean listening, alarm;
 
     private Location location;
     private Database db;
@@ -23,10 +22,11 @@ public class MainActivity extends AppCompatActivity implements ServiceCallbacks 
 
     private Button btnEditSendMessage, btnEditContacts, btnSendMessage, btnAlarm, btnListening;
 
-    private AlarmLoop myService;
+    public boolean listening = false, alarm = false;
+    private AlarmLoop alarmLoop;
     private ListeningLoop listeningLoop;
     private Intent intentAlarm, intentListening;
-    private boolean bound = false, bound2 = false;
+    private boolean boundAlarm = false, boundListening = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,126 +67,71 @@ public class MainActivity extends AppCompatActivity implements ServiceCallbacks 
             }
         });
 
-        listening = false;
         btnListening = (Button) findViewById(R.id.btnListening);
         btnListening.setText("Start listening");
         btnListening.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(listening){ // wylaczenie nasluchiwania
-                    stopService(intentListening);
-                    listening = false;
-                    btnListening.setText("Start listening");
-                    toastMessage("Listening stopped");
-                    onStop1();
-                } else {
-                    intentListening = new Intent(MainActivity.this, ListeningLoop.class);
-                    bindService(intentListening, serviceConnection1, Context.BIND_AUTO_CREATE);
-                    startService(intentListening);
-                    listening = true;
-                    btnListening.setText("Stop listening");
-                    toastMessage("Listening started");
-                }
+                listening = setListening(listening);
             }
         });
 
-        alarm = false;
         btnAlarm = (Button) findViewById(R.id.btnAlarm);
         btnAlarm.setText("Start Alarm");
         btnAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(alarm){ // wylaczenie alarmu
-                    stopService(intentAlarm);
-                    alarm = false;
-                    btnAlarm.setText("Start Alarm");
-                    toastMessage("Alarm stopped");
-                    onStop1();
-                } else { // wystartowanie alarmu
-                    intentAlarm = new Intent(MainActivity.this, AlarmLoop.class);
-                    bindService(intentAlarm, serviceConnection, Context.BIND_AUTO_CREATE);
-                    startService(intentAlarm);
-                    alarm = true;
-                    btnAlarm.setText("Stop Alarm");
-                    toastMessage("Alarm started");
-                }
+                alarm = setAlarm(alarm);
             }
         });
-
     }
-
 
     private void toastMessage(String text) {
         toast.setText(text);
         toast.show();
     }
 
-    protected void onStop1() {
-        if (bound) {
-            AlarmLoop.setCallbacks(null); // unregister
-            ListeningLoop.setCallbacks(null);
-            unbindService(serviceConnection);
-            bound = false;
+    private boolean setAlarm(boolean alarm){
+        if(alarm){ // wylaczenie alarmu
+            stopService(intentAlarm);
+            btnAlarm.setText("Start Alarm");
+            toastMessage("Alarm stopped");
+            stop();
+            alarm = false;
+        } else { // wystartowanie alarmu
+            intentAlarm = new Intent(MainActivity.this, AlarmLoop.class);
+            bindService(intentAlarm, alarmServiceConnection, Context.BIND_AUTO_CREATE);
+            startService(intentAlarm);
+            btnAlarm.setText("Stop Alarm");
+            toastMessage("Alarm started");
+            alarm = true;
         }
-        if (bound2) {
-            AlarmLoop.setCallbacks(null); // unregister
-            ListeningLoop.setCallbacks(null);
-            unbindService(serviceConnection1);
-            bound2 = false;
-        }
+        return alarm;
     }
 
-    /** Callbacks for service binding, passed to bindService() */
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            // cast the IBinder and get MyService instance
-            AlarmLoop.LocalBinder binder = (AlarmLoop.LocalBinder) service;
-            myService = binder.getService();
-            bound = true;
-            myService.setCallbacks(MainActivity.this); // register
+    private boolean setListening(boolean listening){
+        if(listening){ // wylaczenie nasluchiwania
+            stopService(intentListening);
+            btnListening.setText("Start listening");
+            toastMessage("Listening stopped");
+            stop();
+            listening = false;
+        } else {
+            intentListening = new Intent(MainActivity.this, ListeningLoop.class);
+            bindService(intentListening, listeningServiceConnection, Context.BIND_AUTO_CREATE);
+            startService(intentListening);
+            btnListening.setText("Stop listening");
+            toastMessage("Listening started");
+            listening = true;
         }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            bound = false;
-        }
-    };
-
-    private ServiceConnection serviceConnection1 = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            ListeningLoop.LocalBinder binder1 = (ListeningLoop.LocalBinder) service;
-            listeningLoop = binder1.getService();
-            bound2 = true;
-            listeningLoop.setCallbacks(MainActivity.this);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            bound2 = false;
-        }
-    };
+        return listening;
+    }
 
     public void startAlarm(){
-        // wylaczenie nasluchiwania
-        stopService(intentListening);
-        listening = false;
-        btnListening.setText("Start listening");
-        toastMessage("Listening stopped");
-        onStop1();
-        //wlaczenie alarmu
-        intentAlarm = new Intent(MainActivity.this, AlarmLoop.class);
-        bindService(intentAlarm, serviceConnection, Context.BIND_AUTO_CREATE);
-        startService(intentAlarm);
-        alarm = true;
-        btnAlarm.setText("Stop Alarm");
-        toastMessage("Alarm started");
+        listening = setListening(listening);
+        alarm = setAlarm(alarm);
     }
 
-    /* Defined by ServiceCallbacks interface */
     @Override
     public void sendMessage() {
         if(!alarm){
@@ -202,5 +147,54 @@ public class MainActivity extends AppCompatActivity implements ServiceCallbacks 
         }
         toastMessage(message.toString());
     }
+
+    protected void stop() {
+        if (boundAlarm) {
+            AlarmLoop.setCallbacks(null); // unregister
+            ListeningLoop.setCallbacks(null);
+            unbindService(alarmServiceConnection);
+            boundAlarm = false;
+        }
+        if (boundListening) {
+            AlarmLoop.setCallbacks(null); // unregister
+            ListeningLoop.setCallbacks(null);
+            unbindService(listeningServiceConnection);
+            boundListening = false;
+        }
+    }
+
+    /** Callbacks for service binding, passed to bindService() */
+    private ServiceConnection alarmServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // cast the IBinder and get MyService instance
+            AlarmLoop.LocalBinder binder = (AlarmLoop.LocalBinder) service;
+            alarmLoop = binder.getService();
+            boundAlarm = true;
+            alarmLoop.setCallbacks(MainActivity.this); // register
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            boundAlarm = false;
+        }
+    };
+
+    private ServiceConnection listeningServiceConnection= new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            ListeningLoop.LocalBinder binder1 = (ListeningLoop.LocalBinder) service;
+            listeningLoop = binder1.getService();
+            boundListening = true;
+            listeningLoop.setCallbacks(MainActivity.this);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            boundListening = false;
+        }
+    };
 }
 
