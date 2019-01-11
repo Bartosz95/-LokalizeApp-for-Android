@@ -6,12 +6,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.widget.Toast;
 
 public class AlarmLoop extends Service {
-    private static ServiceCallbacks serviceCallbacks;
+
+    private static ServiceCallbacks mainActivity;
     private final IBinder binder = new LocalBinder();
-    private Toast toast;
     private Timer timer;
     private TimerTask timerTask;
 
@@ -28,14 +27,14 @@ public class AlarmLoop extends Service {
     }
 
     public static void setCallbacks(ServiceCallbacks callbacks) {
-        serviceCallbacks = callbacks;
+        mainActivity = callbacks;
     }
 
     private class MyTimerTask extends TimerTask {
         @Override
         public void run() { // activate MainActivity.sendMessage()
-            if (serviceCallbacks != null) {
-                serviceCallbacks.sendMessage();
+            if (mainActivity != null) {
+                mainActivity.sendMessage();
             }
         }
     }
@@ -44,14 +43,13 @@ public class AlarmLoop extends Service {
     public void onCreate() {
         super.onCreate();
         timer = new Timer();
-        toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         clearTimerSchedule();
         initTask();
-        timer.scheduleAtFixedRate(timerTask, 0, 3*60*1000);
+        timer.scheduleAtFixedRate(timerTask, 0, 3*1000);
         return super.onStartCommand(intent, flags, startId);
     }
 
