@@ -49,7 +49,7 @@ public class AlarmLoop extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         clearTimerSchedule();
         initTask();
-        timer.scheduleAtFixedRate(timerTask, 0, 3*1000);
+        timer.scheduleAtFixedRate(timerTask, 0, 60*3*1000);
         return super.onStartCommand(intent, flags, startId);
     }
 

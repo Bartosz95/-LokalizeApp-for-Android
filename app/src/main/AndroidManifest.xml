@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:andriod="http://schemas.android.com/apk/res-auto"
     package="com.example.home.projekt">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -16,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:windowSoftInputMode="adjustPan|adjustResize"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -26,7 +28,7 @@
         </activity>
         <activity android:name=".Statement" />
         <activity android:name=".Contacts" />
-        <service android:name=".ListeningLoop"/>
+        <service android:name=".Listening"/>
         <service android:name=".AlarmLoop"/>
         <receiver android:name=".StartActivity">
             <intent-filter>
