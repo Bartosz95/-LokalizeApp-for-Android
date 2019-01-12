@@ -95,4 +95,9 @@ public class Listening extends Service {
         mediaSession.setActive(true);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mediaSession.setActive(false);
+    }
 }
