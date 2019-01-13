@@ -1,6 +1,7 @@
 package com.example.home.projekt;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -26,10 +27,12 @@ public class Database {
         this.activity = activity;
 
         toast = Toast.makeText(activity, "", Toast.LENGTH_SHORT);
+
+
         //dropTable(TABLE1_NAME);
         //dropTable(TABLE2_NAME);
-        //createTable(TABLE1_NAME);
-        //createTable(TABLE2_NAME);
+        createTable(TABLE1_NAME);
+        createTable(TABLE2_NAME);
     }
 
     public String getStatement(){
@@ -159,7 +162,7 @@ public class Database {
     private void createTable(String tableName){
         switch (tableName){
             case TABLE1_NAME: {
-                String query = String.format("CREATE TABLE %s ( %s TEXT);", TABLE1_NAME, TABLE1_COLUMN1);
+                String query = String.format("CREATE TABLE IF NOT EXISTS %s ( %s TEXT);", TABLE1_NAME, TABLE1_COLUMN1);
                 try {
                     openDatabase();
                     db.beginTransaction();
@@ -169,7 +172,7 @@ public class Database {
                     db.execSQL(query);
                     //insertDefaultStatement();
                     db.setTransactionSuccessful();
-                    toastMessage(String.format("Table '%s' was created",TABLE1_NAME));
+                    //toastMessage(String.format("Table '%s' was created",TABLE1_NAME));
                 } catch (SQLiteException e) {
                     toastMessage("Error insertData: " + e.getMessage());
                 } finally {
@@ -180,13 +183,13 @@ public class Database {
             }
 
             case TABLE2_NAME: {
-                String query = String.format("CREATE TABLE %s ( %s integer PRIMARY KEY autoincrement, %s TEXT, %s TEXT);", TABLE2_NAME, TABLE2_COLUMN1, TABLE2_COLUMN2, TABLE2_COLUMN3);
+                String query = String.format("CREATE TABLE IF NOT EXISTS %s ( %s integer PRIMARY KEY autoincrement, %s TEXT, %s TEXT);", TABLE2_NAME, TABLE2_COLUMN1, TABLE2_COLUMN2, TABLE2_COLUMN3);
                 try {
                     openDatabase();
                     db.beginTransaction();
                     db.execSQL(query);
                     db.setTransactionSuccessful();
-                    toastMessage(String.format("Table '%s' was created",TABLE2_NAME));
+                    //toastMessage(String.format("Table '%s' was created",TABLE2_NAME));
                 } catch (SQLiteException e) {
                     toastMessage("Error insertData: " + e.getMessage());
                 } finally {

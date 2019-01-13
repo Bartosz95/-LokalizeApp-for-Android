@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
@@ -149,11 +148,9 @@ public class MainActivity extends AppCompatActivity implements ServiceCallbacks 
     private void deactivatedButtons(){
         if(isAlarm || isListening){
             btnEditContacts.setEnabled(false);
-            btnSendMessage.setEnabled(false);
             btnEditSendMessage.setEnabled(false);
         } else {
             btnEditContacts.setEnabled(true);
-            btnSendMessage.setEnabled(true);
             btnEditSendMessage.setEnabled(true);
         }
         if(isAlarm){
@@ -275,7 +272,6 @@ public class MainActivity extends AppCompatActivity implements ServiceCallbacks 
                                         }
                                     });
                             return;
-
                     }
                 }
                 break;
