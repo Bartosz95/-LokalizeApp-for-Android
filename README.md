@@ -1,34 +1,45 @@
 # KidnApp - Android Application
-## Short description
-Application KidnApp is intended to send text message and phone localization when a user is in danger. This application was made at one of study subject.  
+## Abstract
+KidnApp can helps to yo be more savety. When you are in denger you can press both the volume up and volume down buttons for eight seconds and it starts sending SMS with your localization and text message to your contacts every three minutes.
+ 
 ## technologies
-* Project was build in Android Studio
-* Build by Gradle
-## Long description
-This part show how to use application.
-### Permission
-For correct operation you need to accept tree permission:
+- Java
+- Android Studio
+- Gradle
+
+## Description
+First you need to build and install this application. The best way to do it is to open this  project by Android Studio. In it there is a manager which helps you build and install project on your phone. Currently the application is not avaiable in official android store. The aim of createing this aplication was th increase savety. For properly workinkg this application need few permissions listed below.
+### Permissions
+
 * Localization
 * Contact
 * Send message
 
+## Tutorial
+Let's assume that you installed application correctly. In the first place when you open it you should see acceptance perrmision form similar like on picture below. I've installed this app on my own phone that's why my form is in polish.
+
 <p align="center"><p align="center"><img src="Description/photo/permission.png" height="600px"></p>
 
 ### Main menu
-Main menu is filled by five buttons. From this level you can access to 4 functionality.
+After you accept permissions you will see a main menu. It contains five buttons. Now you need to set your text message and and choose the contacts which will receive your SMS.
 <p align="center"><img src="Description/photo/menu.png" height="600px"></p>
 
-### Edit message
+### Set message in SMS
+Press the EDIT SEND MESSAGE button and open text editor. By default the message is "Please come ASAP. I need you because I am in danger !!!”. You should change it definitely.
 <p align="center"><img src="Description/photo/message.png" height="600px"></p>
 
-### Edit contacts
-<p align="center"><img src="Description/photo/contact.png" height="600px"></p>
+### Choose your contacts
+Next you need to choose contacts who should recive your message. When you press the EDIT CONTACTS button it will open contacts manager. On the bottom of the screen you will see a two buttons. The first one allows to add new contact to recivers and the seconds one redirects you to Main screen of application. 
+To delete choosen contact by press it in the application menager.
+<p align="center"><img src="Description/photo/deletecontact.png" height="600px"></p>
 
-### Just Send message 
+### Test it
+There are a three ways to test the app. 
+- You can just send a single message - click the SEND MESSAGE button. 
+- Also you can trigger procedure of sending message every 3 minutes by click START ALARM.
+<p align="center"><img src="Description/photo/alarm.png" height="600px"></p>
 
-### Start listening 
+- And you can finally press the START LISTENING button which start main functionality of application. Now the application will be working in background and listening for your action. When you press the both the volume up and the volume down buttons for eight secound it will be sending message with localization and setted text every 3 minutest to choosen contacts. Then the only avaiable button will be STOP ALARM
 <p align="center"><img src="Description/photo/listening.png" height="600px"></p>
 
-### Stop listening
-<p align="center"><img src="Description/photo/alarm.png" height="600px"></p>
 
